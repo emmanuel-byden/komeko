@@ -8,7 +8,7 @@ import Menu from './Mcomponents/Menu'
 import Contact from './Mcomponents/Contact'
 import { Routes, Route } from 'react-router-dom'
 import Auth from './components/Auth'
-import './App.css'
+import './index.css'
 import React from 'react'
 
 export default function App() {

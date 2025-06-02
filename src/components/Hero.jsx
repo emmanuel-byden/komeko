@@ -1,4 +1,4 @@
-import '../App.css';
+import '../index.css'; // Ensure you have Tailwind CSS set up in your project
 import { useNavigate } from 'react-router-dom';
 
 export default function Hero() {

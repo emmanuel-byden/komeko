@@ -1,5 +1,5 @@
 import Header from './Header';
-import '../App.css';
+import '../index.css'; // Ensure you have the correct path to your CSS file
 import React from 'react';
 import { Link } from 'react-router-dom';
 

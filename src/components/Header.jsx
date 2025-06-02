@@ -1,4 +1,4 @@
-import '../App.css';
+import '../index.css'; // Ensure you have Tailwind CSS set up in your project
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa'; // Import the user profile icon

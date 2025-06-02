@@ -1,4 +1,4 @@
-import '../App.css';
+import '../index.css'; // Ensure you have Tailwind CSS set up in your project
 
 const services = [
     { title: "Weddings", desc: "Make your special day unforgettable with our elegant and flavorful wedding menus. Our team works closely with you to craft a dining experience that complements your celebration, offering everything from sophisticated plated dinners to beautifully presented buffets, all tailored to your unique style and preferences." },

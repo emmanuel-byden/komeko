@@ -1,5 +1,5 @@
 import React from 'react';
-import '../App.css'; // Ensure Tailwind CSS is imported
+import '../index.css'; // Ensure Tailwind CSS is imported
 
 // Import images
 import saladbar from '../assets/image/saladbar.jpg';
