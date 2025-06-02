@@ -7,12 +7,33 @@ export default function Contact() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log({ name, email, message });
-        setName('');
-        setEmail('');
-        setMessage('');
+        
+        try {
+            const response = await fetch('https://komeko-backend.onrender.com/contacts/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, message }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            alert(`Message sent successfully! Your message ID is: ${data.id}`);
+            
+            // Reset form fields
+            setName('');
+            setEmail('');
+            setMessage('');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to send message. Please try again.');
+        }
     };
 
     return (
