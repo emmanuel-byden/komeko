@@ -1,8 +1,21 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sqlite3
 
+# Initialize FastAPI app
 app = FastAPI()
+
+# CORS Middleware (allow frontend to communicate with backend)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with your Netlify frontend URL for better security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# SQLite database file
 DATABASE = 'bookings.db'
 
 # Initialize the database
@@ -31,9 +44,10 @@ def init_db():
         ''')
         conn.commit()
 
+# Call the database initialization function
 init_db()
 
-# Models
+# Models for API endpoints
 class Booking(BaseModel):
     name: str
     email: str
@@ -123,6 +137,3 @@ async def create_contact(contact: Contact):
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
