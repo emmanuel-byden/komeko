@@ -23,7 +23,7 @@ export default function Contact() {
             <div className="flex-grow flex flex-col items-center justify-center p-8">
                 <h2 className="text-3xl font-bold text-center my-8">Contact Us</h2>
                 <p className="text-center text-gray-700 mb-6">
-                    You can reach us at info@komeko.com or call 123-456-7890.
+                    You can reach us at info@komeko.com or call 0712345678.
                 </p>
                 <form onSubmit={handleSubmit} className="w-full max-w-md">
                     <div className="mb-4">
