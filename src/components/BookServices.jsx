@@ -8,7 +8,7 @@ export default function BookService() {
         email: '',
         phone: '',
         eventType: '',
-        date: '',
+        event_date: '', // Change to match the API field
         guests: 1,
         specialRequests: ''
     });
@@ -26,22 +26,26 @@ export default function BookService() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    special_requests: formData.specialRequests, // Ensure correct field name
+                }),
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Network response was not ok');
             }
 
             const data = await response.json();
             alert(`Booking created successfully with ID: ${data.id}`);
-            // Optionally reset the form
+            // Reset the form after successful submission
             setFormData({
                 name: '',
                 email: '',
                 phone: '',
                 eventType: '',
-                date: '',
+                event_date: '', // Reset to match API field
                 guests: 1,
                 specialRequests: ''
             });
@@ -119,8 +123,8 @@ export default function BookService() {
                                 <label className="block text-sm font-medium text-gray-700">Event Date</label>
                                 <input
                                     type="date"
-                                    name="date"
-                                    value={formData.date}
+                                    name="event_date" // Match the API field
+                                    value={formData.event_date}
                                     onChange={handleChange}
                                     required
                                     className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
