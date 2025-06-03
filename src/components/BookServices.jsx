@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 import Header from './Header';
 import '../index.css'; // Ensure you have the correct path to your CSS file
@@ -20,7 +19,7 @@ const BookService = () => {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        const unsubscribe = firebase.auth().onAuthStateChanged(setUser);
+        const unsubscribe = onAuthStateChanged(getAuth(), setUser);
         return () => unsubscribe();
     }, []);
 
