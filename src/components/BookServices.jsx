@@ -1,57 +1,70 @@
+import React, { useState, useEffect } from 'react';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import axios from 'axios';
 import Header from './Header';
 import '../index.css'; // Ensure you have the correct path to your CSS file
-import React, { useState } from 'react';
 
-export default function BookService() {
-    const [formData, setFormData] = useState({
+const BookService = () => {
+    const [user, setUser] = useState(null);
+    const [bookingDetails, setBookingDetails] = useState({
         name: '',
         email: '',
         phone: '',
-        eventType: '',
-        event_date: '', // Match API field
+        event_type: '',
+        event_date: '',
         guests: 1,
-        specialRequests: ''
+        special_requests: '',
     });
+    const [bookingId, setBookingId] = useState(null);
+    const [message, setMessage] = useState('');
 
-    const handleChange = (e) => {
+    useEffect(() => {
+        const unsubscribe = firebase.auth().onAuthStateChanged(setUser);
+        return () => unsubscribe();
+    }, []);
+
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setBookingDetails((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const response = await fetch('https://komeko-backend.onrender.com/bookings/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    special_requests: formData.specialRequests, // Ensure correct field name
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Network response was not ok');
+        if (user) {
+            try {
+                const response = await axios.post('https://komeko-backend.onrender.com/bookings/', {
+                    ...bookingDetails,
+                    email: user.email,
+                });
+                setBookingId(response.data.id);
+                setMessage('Booking created successfully!');
+                setBookingDetails({
+                    name: '',
+                    email: '',
+                    phone: '',
+                    event_type: '',
+                    event_date: '',
+                    guests: 1,
+                    special_requests: '',
+                });
+            } catch (error) {
+                setMessage('Error creating booking: ' + error.response.data.detail);
             }
+        } else {
+            setMessage('Please log in to create a booking.');
+        }
+    };
 
-            const data = await response.json();
-            alert(`Booking created successfully with ID: ${data.id}`);
-            // Reset the form after successful submission
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-                eventType: '',
-                event_date: '',
-                guests: 1,
-                specialRequests: ''
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to create booking. Please try again.');
+    const fetchBooking = async () => {
+        if (bookingId) {
+            try {
+                const response = await axios.get(`https://komeko-backend.onrender.com/bookings/${bookingId}`);
+                console.log('Booking details:', response.data);
+                setMessage('Booking details fetched successfully!');
+            } catch (error) {
+                setMessage('Error fetching booking: ' + error.response.data.detail);
+            }
         }
     };
 
@@ -68,10 +81,10 @@ export default function BookService() {
                             <input
                                 type="text"
                                 name="name"
-                                value={formData.name}
-                                onChange={handleChange}
+                                value={bookingDetails.name}
+                                onChange={handleInputChange}
                                 required
-                                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                             />
                         </div>
 
@@ -81,10 +94,10 @@ export default function BookService() {
                                 <input
                                     type="email"
                                     name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
+                                    value={bookingDetails.email}
+                                    onChange={handleInputChange}
                                     required
-                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                                 />
                             </div>
                             <div>
@@ -92,10 +105,10 @@ export default function BookService() {
                                 <input
                                     type="tel"
                                     name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
+                                    value={bookingDetails.phone}
+                                    onChange={handleInputChange}
                                     required
-                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                                 />
                             </div>
                         </div>
@@ -103,11 +116,11 @@ export default function BookService() {
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Event Type</label>
                             <select
-                                name="eventType"
-                                value={formData.eventType}
-                                onChange={handleChange}
+                                name="event_type"
+                                value={bookingDetails.event_type}
+                                onChange={handleInputChange}
                                 required
-                                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                             >
                                 <option value="">Select Event Type</option>
                                 <option>Wedding</option>
@@ -123,11 +136,11 @@ export default function BookService() {
                                 <label className="block text-sm font-medium text-gray-700">Event Date</label>
                                 <input
                                     type="date"
-                                    name="event_date" // Match API field
-                                    value={formData.event_date}
-                                    onChange={handleChange}
+                                    name="event_date"
+                                    value={bookingDetails.event_date}
+                                    onChange={handleInputChange}
                                     required
-                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                                 />
                             </div>
                             <div>
@@ -135,36 +148,42 @@ export default function BookService() {
                                 <input
                                     type="number"
                                     name="guests"
-                                    value={formData.guests}
-                                    onChange={handleChange}
+                                    value={bookingDetails.guests}
+                                    onChange={handleInputChange}
                                     required
                                     min="1"
-                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                    className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                                 />
                             </div>
                         </div>
-                        
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Special Requests</label>
                             <textarea
-                                name="specialRequests"
+                                name="special_requests"
                                 rows="4"
-                                value={formData.specialRequests}
-                                onChange={handleChange}
-                                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-red-500 focus:border-red-500"
+                                value={bookingDetails.special_requests}
+                                onChange={handleInputChange}
+                                className="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500"
                                 placeholder="Let us know anything important..."
                             ></textarea>
                         </div>
-                        
+
                         <button
                             type="submit"
                             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition"
                         >
-                            Submit Bookings
+                            Submit Booking
                         </button>
                     </form>
+                    {message && <p className="mt-4 text-red-500">{message}</p>}
+                    <button onClick={fetchBooking} className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                        Fetch Booking Details
+                    </button>
                 </div>
             </section>
         </>
     );
-}
+};
+
+export default BookService;

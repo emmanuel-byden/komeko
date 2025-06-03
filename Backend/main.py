@@ -1,6 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr, constr
 from sqlalchemy import create_engine, Column, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
@@ -78,11 +77,6 @@ def get_db():
 async def read_root():
     return {"message": "Welcome to the FastAPI Booking API!"}
 
-# Favicon endpoint
-@app.get("/favicon.ico")
-async def get_favicon():
-    return FileResponse(None)  # Update the path as needed
-
 # Booking endpoints
 @app.post("/bookings/")
 async def create_booking(booking: BookingCreate, db: SessionLocal = Depends(get_db)):
@@ -101,7 +95,7 @@ async def create_booking(booking: BookingCreate, db: SessionLocal = Depends(get_
         db.refresh(db_booking)
         return {"id": db_booking.id, "message": "Booking created successfully"}
     except Exception as e:
-        db.rollback()  # Rollback the transaction on error
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/bookings/{booking_id}")
@@ -147,7 +141,7 @@ async def create_contact(contact: ContactCreate, db: SessionLocal = Depends(get_
         db.refresh(db_contact)
         return {"id": db_contact.id, "message": "Contact message submitted successfully"}
     except Exception as e:
-        db.rollback()  # Rollback the transaction on error
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/contacts/")
