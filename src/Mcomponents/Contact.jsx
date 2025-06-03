@@ -11,7 +11,7 @@ export default function Contact() {
         e.preventDefault();
         
         try {
-            const response = await fetch('https://komeko-backend.onrender.com/contacts/', {
+            const response = await fetch('https://your-backend-url/contacts/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
