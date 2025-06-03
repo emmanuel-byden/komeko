@@ -8,7 +8,7 @@ export default function BookService() {
         email: '',
         phone: '',
         eventType: '',
-        event_date: '', // Change to match the API field
+        event_date: '', // Match API field
         guests: 1,
         specialRequests: ''
     });
@@ -45,7 +45,7 @@ export default function BookService() {
                 email: '',
                 phone: '',
                 eventType: '',
-                event_date: '', // Reset to match API field
+                event_date: '',
                 guests: 1,
                 specialRequests: ''
             });
@@ -123,7 +123,7 @@ export default function BookService() {
                                 <label className="block text-sm font-medium text-gray-700">Event Date</label>
                                 <input
                                     type="date"
-                                    name="event_date" // Match the API field
+                                    name="event_date" // Match API field
                                     value={formData.event_date}
                                     onChange={handleChange}
                                     required
